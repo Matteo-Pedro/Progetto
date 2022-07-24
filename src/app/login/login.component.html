@@ -1,0 +1,31 @@
+<div class="login">
+    <p-card header="Login" [style]="{'width': '16rem', 'text-align' : 'center'}">
+        <form [formGroup]="userForm">
+            <span class="p-float-label">
+                <input formControlName="username" id="float-input" type="text" pInputText>
+                <label for="float-input">Username</label>
+            </span>
+            <br>
+            <span class="p-float-label">
+                <input formControlName="password" id="float-input" type="password" pInputText>
+                <label style="text-align: center;" for="float-input">Password</label>
+            </span>
+        </form>
+        <br>
+        <div style="text-align: left;">
+            <p-checkbox [(ngModel)]="value" [binary]="true" label="Ricorda"></p-checkbox>
+        </div>
+        <br><br>
+        <button pButton type="submit" label="LOGIN" (click)="auth()" [disabled]="!userForm.valid"></button>
+    </p-card>
+</div>
+
+
+<p-dialog header="Login" *ngIf="clickedLogin" [(visible)]="!authenticated" [modal]="true" [style]="{width: '30vw'}"
+    [draggable]="false" [resizable]="false" [closable]="false">
+    <p class="m-0">Nome utente o password errati</p>
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-check" (click)="clickedLogin = false" label="Ok" styleClass="p-button-text">
+        </p-button>
+    </ng-template>
+</p-dialog>
