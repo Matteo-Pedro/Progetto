@@ -12,11 +12,13 @@ import { ButtonModule } from 'primeng/button';
 import {CardModule} from 'primeng/card';
 import {DialogModule} from 'primeng/dialog';
 import { RouterModule, Routes } from '@angular/router';
+import {PanelModule} from 'primeng/panel';
+import {ToolbarModule} from 'primeng/toolbar';
 
 
 const appRoutes: Routes = [
-  { path: '', component: LoginComponent, data: { bodyClass: 'sfondo' } },
-  { path: 'home', component: HomeComponent, data: { bodyClass: 'white' }},
+  { path: '', component: LoginComponent},
+  { path: 'home', component: HomeComponent},
 ];
 
 
@@ -38,6 +40,7 @@ const appRoutes: Routes = [
     CardModule,
     DialogModule,
     RouterModule.forRoot(appRoutes),
+    PanelModule
   ],
   providers: [],
   exports: [RouterModule],

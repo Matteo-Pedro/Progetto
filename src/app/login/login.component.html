@@ -1,13 +1,13 @@
 <div class="login">
-    <p-card header="Login" [style]="{'width': '16rem', 'text-align' : 'center'}">
+    <p-card header="Login" [style]="{'minWidth': '16rem', 'text-align' : 'center'}">
         <form [formGroup]="userForm">
             <span class="p-float-label">
-                <input formControlName="username" id="float-input" type="text" pInputText>
+                <input formControlName="username" id="float-input" type="text" pInputText [style]="{maxWidth:'200px'}">
                 <label for="float-input">Username</label>
             </span>
             <br>
             <span class="p-float-label">
-                <input formControlName="password" id="float-input" type="password" pInputText>
+                <input formControlName="password" id="float-input" type="password" pInputText [style]="{maxWidth:'200px'}">
                 <label style="text-align: center;" for="float-input">Password</label>
             </span>
         </form>

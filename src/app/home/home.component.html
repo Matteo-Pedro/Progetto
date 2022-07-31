@@ -1,2 +1,20 @@
-<p>Oggi la macchina tocca a </p>
-{{this.newUser}}
+<div class="centered">
+    <p-toolbar style="text-align: center;">
+        <div class="p-toolbar-group-left">
+            <p-button (onClick)="changeUser()" label="Inverti" icon="pi pi-sort-alt"></p-button>
+        </div>
+
+        <div class="p-toolbar-group-right">
+        </div>
+    </p-toolbar> <br>
+
+    <p-panel header="Riepilogo">
+        <div *ngIf="!isFestivo">
+            <span>Oggi è il turno di </span>
+            <span>{{this.newUser}}</span>
+        </div>
+        <div *ngIf="isFestivo">
+            <span>Oggi è festa</span>
+        </div>
+    </p-panel>
+</div>

@@ -1,6 +1,7 @@
 import { style } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { TitleStrategy } from '@angular/router';
 import { Persona } from '../persona.model';
 import { PersonaService } from '../persona.service';
 
@@ -12,18 +13,21 @@ import { PersonaService } from '../persona.service';
 })
 export class HomeComponent implements OnInit {
   newUser: string;
-  currentUser: string = "Pedro";
+  savedUser: string;
   utenti = ["Pedro", "Bianco"]
+  changedUser: string;
   date = new Date();
-  oldDate: string;
+  savedDate: string;
   currentDate: string[];
   currentDay: number;
   currentMonth: string;
   currentYear: number;
-  oldDay: number;
-  oldMonth: string;
-  oldYear: number;
+  savedDay: number;
+  savedMonth: string;
+  savedYear: number;
+  isFestivo: boolean;
   objectDate = {
+    utente: "",
     giorno: "",
     mese: "",
     anno: ""
@@ -35,21 +39,23 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     document.body.style.background = "white";
-    this.getCurrentDate();
-    this.getOldDate();
-    this.changeMacchina();
+    this.getSavedDate();
+    this.saveCurrentDate();
+    this.checkFestivo();
+
     // console.log(this.personaService.user.nome);
   }
 
-  getOldDate() {
-    this.oldDate = JSON.parse(localStorage.getItem("Data"));
-    this.oldDay = this.oldDate['giorno'];
-    this.oldMonth = this.oldDate['mese'];
-    this.oldYear = this.oldDate['anno'];
+  getSavedDate() {
+    this.savedDate = JSON.parse(localStorage.getItem("Data"));
+    this.savedDay = this.savedDate['giorno'];
+    this.savedMonth = this.savedDate['mese'];
+    this.savedYear = this.savedDate['anno'];
+    this.savedUser = this.savedDate['utente'];
   }
 
 
-  getCurrentDate() {
+  saveCurrentDate() {
     this.currentDate = this.date.toString().split(" ");
     this.currentDay = +this.currentDate[2];
     this.currentMonth = this.currentDate[1];
@@ -57,16 +63,20 @@ export class HomeComponent implements OnInit {
     this.objectDate.giorno = this.currentDay.toString();
     this.objectDate.mese = this.currentMonth;
     this.objectDate.anno = this.currentYear.toString();
-    localStorage.setItem('Data', JSON.stringify(this.objectDate));
+    this.changeMacchina();
+    if (this.savedDay != this.currentDay || this.savedDate == null) {
+      localStorage.setItem('Data', JSON.stringify(this.objectDate));
+    }
+
   }
 
 
 
   changeMacchina() {
-    if (this.oldMonth == this.currentMonth) {
-      const diff = this.currentDay - +this.oldDay;
+    if (this.savedMonth == this.currentMonth) {
+      const diff = this.currentDay - +this.savedDay;
       if (diff / 2 != 0) {
-        if (this.currentUser == this.utenti[0]) {
+        if (this.savedUser == this.utenti[0]) {
           this.newUser = this.utenti[1];
         }
         else {
@@ -74,10 +84,30 @@ export class HomeComponent implements OnInit {
         }
       }
       else {
-        this.newUser = this.currentUser;
+        this.newUser = this.savedUser;
       }
     }
-    alert("Oggi è il turno di: " + this.newUser);
+    this.objectDate.utente = this.newUser;
+  }
+
+  checkFestivo() {
+    if (this.currentDate[0] == "Sun" || this.currentDate[0] == "Sat"){
+      this.isFestivo = true;
+    }
+    else {
+      this.isFestivo = false;
+    }
+  }
+
+  changeUser() {
+    if(this.savedUser == this.utenti[0]) {
+      this.changedUser = this.utenti[1];
+    }
+    else {
+      this.changedUser = this.utenti[0];
+    }
+    this.objectDate.utente = this.changedUser;
+    localStorage.setItem('Data', JSON.stringify(this.objectDate));
   }
 
 }
