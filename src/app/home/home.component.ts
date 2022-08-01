@@ -13,14 +13,15 @@ import { PersonaService } from '../persona.service';
 })
 export class HomeComponent implements OnInit {
   newUser: string;
+  diff: number;
   savedUser: string;
   utenti = ["Pedro", "Bianco"]
   changedUser: string;
   date = new Date();
   savedDate: string;
-  currentDate: string[];
+  currentDate: Date;
   currentDay: number;
-  currentMonth: string;
+  currentMonth: number;
   currentYear: number;
   savedDay: number;
   savedMonth: string;
@@ -30,7 +31,8 @@ export class HomeComponent implements OnInit {
     utente: "",
     giorno: "",
     mese: "",
-    anno: ""
+    anno: "",
+    giorniPerMese: ""
   }
 
   constructor(private personaService: PersonaService) {
@@ -39,8 +41,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     document.body.style.background = "white";
+    this.saveFirstDate();
     this.getSavedDate();
-    this.saveCurrentDate();
+    this.changeMacchina();
     this.checkFestivo();
 
     // console.log(this.personaService.user.nome);
@@ -55,43 +58,55 @@ export class HomeComponent implements OnInit {
   }
 
 
-  saveCurrentDate() {
-    this.currentDate = this.date.toString().split(" ");
-    this.currentDay = +this.currentDate[2];
-    this.currentMonth = this.currentDate[1];
-    this.currentYear = +this.currentDate[3];
+  saveFirstDate() {
+    this.currentDate = this.date;
+    this.currentDay = this.currentDate.getDay();
+    this.currentMonth = this.currentDate.getMonth() + 1;
+    this.currentYear = this.currentDate.getFullYear();
+
+
+    // this.currentDate = this.date.toString().split(" ");
+    // this.currentDay = +this.currentDate[2];
+    // this.currentMonth = this.currentDate[1];
+    // this.currentYear = +this.currentDate[3];
     this.objectDate.giorno = this.currentDay.toString();
-    this.objectDate.mese = this.currentMonth;
+    this.objectDate.mese = this.currentMonth.toString();
     this.objectDate.anno = this.currentYear.toString();
-    this.changeMacchina();
-    if (this.savedDay != this.currentDay || this.savedDate == null) {
+    const localStorageDate = JSON.parse(localStorage.getItem("Data"));
+    if (localStorageDate == null) {
+      this.objectDate.utente = "Pedro";
+      this.objectDate.giorniPerMese = new Date(this.currentYear, +this.currentMonth, 0).getDate().toString();
       localStorage.setItem('Data', JSON.stringify(this.objectDate));
     }
-
   }
 
 
 
   changeMacchina() {
-    if (this.savedMonth == this.currentMonth) {
-      const diff = this.currentDay - +this.savedDay;
-      if (diff / 2 != 0) {
-        if (this.savedUser == this.utenti[0]) {
-          this.newUser = this.utenti[1];
-        }
-        else {
-          this.newUser = this.utenti[0];
-        }
+    if (+this.savedMonth == this.currentMonth) {
+      this.diff = this.currentDay - +this.savedDay;
+    }
+    else {
+      this.diff = this.currentDay + (this.savedDate['giorniPerMese'] - this.savedDay);
+    }
+    if (this.diff / 2 != 0) {
+      if (this.savedUser == this.utenti[0]) {
+        this.newUser = this.utenti[1];
       }
       else {
-        this.newUser = this.savedUser;
+        this.newUser = this.utenti[0];
       }
     }
-    this.objectDate.utente = this.newUser;
+    else {
+      this.newUser = this.savedUser;
+    }
+    this.saveDate();
   }
 
+
+
   checkFestivo() {
-    if (this.currentDate[0] == "Sun" || this.currentDate[0] == "Sat"){
+    if (this.currentDate[0] == "Sun" || this.currentDate[0] == "Sat") {
       this.isFestivo = true;
     }
     else {
@@ -100,7 +115,7 @@ export class HomeComponent implements OnInit {
   }
 
   changeUser() {
-    if(this.savedUser == this.utenti[0]) {
+    if (this.savedUser == this.utenti[0]) {
       this.changedUser = this.utenti[1];
     }
     else {
@@ -110,4 +125,14 @@ export class HomeComponent implements OnInit {
     localStorage.setItem('Data', JSON.stringify(this.objectDate));
   }
 
+
+  saveDate() {
+    this.objectDate.giorno = this.currentDay.toString();
+    this.objectDate.mese = this.currentMonth.toString();
+    this.objectDate.anno = this.currentYear.toString();
+    this.objectDate.giorniPerMese = new Date(this.currentYear, +this.currentMonth, 0).getDate().toString();
+    this.objectDate.utente = this.newUser;
+    localStorage.setItem('Data', JSON.stringify(this.objectDate));
+  }
 }
+
